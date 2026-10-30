@@ -36,6 +36,15 @@ jobs:
           name: pact
           path: pacts/
 
+      - name: Send test results to Grafana
+        if: always()
+        uses: gillersja1/test-results-otel@v1
+        with:
+          results: TestResults/consumer.trx
+          suite: consumer
+          otlp-endpoint: ${{ secrets.OTEL_EXPORTER_OTLP_ENDPOINT }}
+          otlp-headers: ${{ secrets.OTEL_EXPORTER_OTLP_HEADERS }}
+
       - name: Consumer test report
         if: always()
         uses: dorny/test-reporter@v1
@@ -67,6 +76,15 @@ jobs:
           --logger "trx;LogFileName=provider.trx"
           --logger "console;verbosity=normal"
           --results-directory ./TestResults
+
+      - name: Send test results to Grafana
+        if: always()
+        uses: gillersja1/test-results-otel@v1
+        with:
+          results: TestResults/provider.trx
+          suite: provider
+          otlp-endpoint: ${{ secrets.OTEL_EXPORTER_OTLP_ENDPOINT }}
+          otlp-headers: ${{ secrets.OTEL_EXPORTER_OTLP_HEADERS }}
 
       - name: Provider test report
         if: always()
